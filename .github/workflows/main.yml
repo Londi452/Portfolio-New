@@ -1,0 +1,50 @@
+on:
+  workflow_dispatch:  # Allows manual or workflow-based triggering
+ 
+jobs:
+  main-job:
+    runs-on: ubuntu-latest
+ 
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          ref: 'refs/heads/controller'
+ 
+      # Step 2: Set up Node.js (for running front-end tests)
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'  # Adjust the Node.js version if necessary
+
+      # Step 3: Install dependencies (Install testing tools and any dependencies)
+      - name: Install dependencies
+        run: npm install
+
+      # Step 4: HTML/CSS Linting (Stylelint for CSS, HTMLHint for HTML)
+      - name: Lint HTML and CSS
+        run: |
+          # Install Stylelint and HTMLHint
+          npm install --save-dev stylelint htmlhint
+
+          # Lint CSS with Stylelint
+          npx stylelint '**/*.css'
+
+          # Lint HTML with HTMLHint
+          npx htmlhint '**/*.html'
+
+      # Step 5: Run front-end tests (Assuming the app is rendered locally)
+      - name: Run Cypress tests
+        run: |
+          # Install Cypress
+          npm install cypress --save-dev
+
+          # Run Cypress tests
+          npx cypress run
+
+      # Optional: You can run Pa11y for accessibility checks
+      # - name: Run Pa11y Accessibility Tests
+      #   run: |
+      #     npm install --save-dev pa11y
+      #     npx pa11y http://localhost:3000
